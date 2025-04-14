@@ -1,0 +1,46 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.surface {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f2f5;
+}
+
+.main {
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f2f5;
+}
+
+.content {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgb(0 0 0 / 20%);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+.title {
+    font-size: 48px;
+}
+
+.desc {
+    font-size: 20px;
+}
+
+.footer-desc {
+    margin-top: 20px;
+}
+
+.footer-text {
+    font-size: 18px;
+}

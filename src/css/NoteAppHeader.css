@@ -1,0 +1,18 @@
+.note-app-header {
+    width: 100%;
+    max-width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #001529;
+    color: #fff;
+    padding: 0 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.note-app-title {
+    margin: 0;
+    color: #fff;
+    font-size: 18px;
+}
