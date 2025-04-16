@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Layout, Typography, List, Input, Button, message, Modal } from 'antd';
+import { Layout, Typography, List, Input, Button, message, Modal, Pagination } from 'antd';
 import axiosInstance from '../tools/axiosInstance';
 import '../css/NotebookEditor.css';
 import NoteAppHeader from '../components/NoteAppHeader';
@@ -16,14 +16,19 @@ function NotebookEditor() {
   const [noteTitle, setNoteTitle] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalNotes, setTotalNotes] = useState(0);
 
-  const fetchNotes = async () => {
+  const fetchNotes = async (page = 1, limit = 10) => {
     try {
-      const response = await axiosInstance.get(`/notes/${notebookId}`);
-      console.log("Received notes:", response.data.data)
+      const response = await axiosInstance.get(`/notes/${notebookId}/pagination`, {
+        params: { page, limit },
+      });
+      console.log("Received notes:", response.data.data);
 
-      const sortedNotes = response.data.data.sort((a, b) => a.id - b.id);
-      setNotes(sortedNotes);
+      setNotes(response.data.data);
+      setTotalNotes(response.data.total);
     } catch (error) {
       console.error('Error fetching notes: ', error);
       message.error('Failed to load notes.');
@@ -31,8 +36,8 @@ function NotebookEditor() {
   };
 
   useEffect(() => {
-    fetchNotes();
-  }, [notebookId]);
+    fetchNotes(currentPage, limit);
+  }, [notebookId, currentPage, limit]);
 
   const handleNoteSelect = (note) => {
     setSelectedNote(note);
@@ -52,7 +57,7 @@ function NotebookEditor() {
         {
           title: noteTitle,
           content: noteContent,
-          notebook_Id: Number(notebookId)
+          notebook_Id: Number(notebookId),
         }
       );
       message.success('Note updated successfully!');
@@ -124,18 +129,47 @@ function NotebookEditor() {
     }
   };
 
+  const handleLimitChange = (e) => {
+    const newLimit = parseInt(e.target.value, 10);
+    if (!isNaN(newLimit) && newLimit > 0) {
+      setLimit(newLimit);
+      setCurrentPage(1);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
       <NoteAppHeader title="Notebook Editor" className="note-app-header" />
       <Layout className="notebook-editor">
-        <Sider width={300} className="note-list-sider">
+        <Sider width={360} className="note-list-sider">
           <Button
             type="primary"
-            style={{ marginBottom: '10px', width: '100%' }}
-            onClick={showCreateNoteModal}
+            className="create-note-button"
+            onClick={() => setIsModalVisible(true)}
           >
             Create New Note
           </Button>
+          <div className="pagination-container">
+            <Input
+              type="number"
+              min="1"
+              placeholder="Results per page"
+              value={limit}
+              onChange={handleLimitChange}
+              className="results-per-page-input"
+            />
+            <Pagination
+              current={currentPage}
+              pageSize={limit}
+              total={totalNotes}
+              onChange={handlePageChange}
+              className="pagination"
+            />
+          </div>
           <List
             header={<Title level={3}>Notes:</Title>}
             bordered
@@ -157,20 +191,20 @@ function NotebookEditor() {
                 placeholder="Note Title"
                 value={noteTitle}
                 onChange={(e) => setNoteTitle(e.target.value)}
-                style={{ marginBottom: '10px' }}
+                className="note-title-input"
               />
               <Input.TextArea
                 rows={15}
                 placeholder="Write your note here..."
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
-                style={{ marginBottom: '10px' }}
+                className="note-content-textarea"
               />
               <div className="button-group">
                 <Button type="primary" onClick={handleSave}>
                   Save
                 </Button>
-                <Button type="primary" danger onClick={handleDelete}>
+                <Button type="primary" danger onClick={() => handleDelete()}>
                   Delete
                 </Button>
               </div>
@@ -183,8 +217,8 @@ function NotebookEditor() {
         <Modal
           title="Create New Note"
           open={isModalVisible}
-          onOk={handleCreateNote}
-          onCancel={handleCancel}
+          onOk={() => handleCreateNote()}
+          onCancel={() => handleCancel()}
           okText="Create"
           cancelText="Cancel"
         >
