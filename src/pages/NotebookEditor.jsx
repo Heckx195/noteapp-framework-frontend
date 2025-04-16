@@ -10,6 +10,7 @@ const { Title } = Typography;
 
 function NotebookEditor() {
   const { id: notebookId } = useParams();
+  const [notebookName, setNotebookName] = useState("ERROR")
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [noteContent, setNoteContent] = useState('');
@@ -20,14 +21,24 @@ function NotebookEditor() {
   const [limit, setLimit] = useState(10);
   const [totalNotes, setTotalNotes] = useState(0);
 
+  const getNotebookName = async () => {
+    try {
+      const response = await axiosInstance.get(`/notebookname/${notebookId}`);
+      setNotebookName(response.data.notebook_name);
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      message.error('Failed to delete note.');
+    }
+  };
+
   const fetchNotes = async (page = 1, limit = 10) => {
     try {
       const response = await axiosInstance.get(`/notes/${notebookId}/pagination`, {
         params: { page, limit },
       });
-      console.log("Received notes:", response.data.data);
 
       setNotes(response.data.data);
+      console.log("Total: ", response.data.total);
       setTotalNotes(response.data.total);
     } catch (error) {
       console.error('Error fetching notes: ', error);
@@ -38,6 +49,10 @@ function NotebookEditor() {
   useEffect(() => {
     fetchNotes(currentPage, limit);
   }, [notebookId, currentPage, limit]);
+
+  useEffect(() => {
+    getNotebookName();
+  }, [notebookId]);
 
   const handleNoteSelect = (note) => {
     setSelectedNote(note);
@@ -141,6 +156,8 @@ function NotebookEditor() {
     setCurrentPage(page);
   };
 
+  
+
   return (
     <>
       <NoteAppHeader title="Notebook Editor" className="note-app-header" />
@@ -171,7 +188,7 @@ function NotebookEditor() {
             />
           </div>
           <List
-            header={<Title level={3}>Notes:</Title>}
+            header={<Title level={3}>Notebook <em>{notebookName}</em></Title>}
             bordered
             dataSource={notes}
             renderItem={(note) => (

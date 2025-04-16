@@ -19,7 +19,8 @@ function NotebookOverview() {
   const fetchNotebooks = async () => {
     try {
       const response = await axiosInstance.get('/notebooks');
-      setNotebooks(response.data.data);
+      const sortedNotebooks = response.data.data.sort((a, b) => a.id - b.id); // Sort by id
+      setNotebooks(sortedNotebooks);
     } catch (error) {
       console.error('Error fetching notebooks:', error);
       message.error('Failed to load notebooks.');
@@ -80,20 +81,12 @@ function NotebookOverview() {
         <Suspense fallback={<Spin size="large" />}>
           {notebooks?.length > 0 ? (
             notebooks.map((notebook) => (
-              <div
+              <NotebookPreview
                 key={notebook.id}
-                role="button"
-                tabIndex={0}
-                style={{ cursor: 'pointer', marginBottom: '10px' }}
-                onClick={() => handleNotebookClick(notebook.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleNotebookClick(notebook.id);
-                  }
-                }}
-              >
-                <NotebookPreview notebook={notebook} refreshNotebooks={fetchNotebooks} />
-              </div>
+                notebook={notebook}
+                onCardClick={() => handleNotebookClick(notebook.id)}
+                refreshNotebooks={fetchNotebooks}
+              />
             ))
           ) : (
             <Paragraph>No notes available.</Paragraph>

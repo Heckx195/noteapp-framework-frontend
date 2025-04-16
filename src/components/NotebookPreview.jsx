@@ -5,7 +5,7 @@ import '../css/NotebookPreview.css';
 
 const { Title, Text } = Typography;
 
-const NotebookPreview = ({ notebook, refreshNotebooks }) => {
+const NotebookPreview = ({ notebook, refreshNotebooks, onCardClick }) => {
   const [noteCount, setNoteCount] = useState(0);
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
   const [newName, setNewName] = useState('');
@@ -60,6 +60,7 @@ const NotebookPreview = ({ notebook, refreshNotebooks }) => {
       <Card
         hoverable
         className="notebook-card notebook-card-body"
+        onClick={onCardClick}
       >
         <Title level={4} className="notebook-title">
           {notebook.name}
@@ -95,7 +96,7 @@ const NotebookPreview = ({ notebook, refreshNotebooks }) => {
         open={isRenameModalVisible}
         onOk={(e) => {
           e.stopPropagation();
-          handleRename;
+          handleRename();
         }}
         onCancel={(e) => {
           e.stopPropagation();
@@ -103,7 +104,7 @@ const NotebookPreview = ({ notebook, refreshNotebooks }) => {
         }}
       >
         <Input
-          placeholder="Enter new notebook name"
+          placeholder={notebook.name}
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
         />
