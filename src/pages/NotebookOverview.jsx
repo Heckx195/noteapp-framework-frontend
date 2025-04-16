@@ -16,17 +16,18 @@ function NotebookOverview() {
   const [newNotebookName, setNewNotebookName] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchFileContent = async () => {
-      try {
-        const response = await axiosInstance.get('/notebooks');
-        setNotebooks(response.data.data);
-      } catch (error) {
-        console.error('Error fetching notebooks:', error);
-      }
-    };
+  const fetchNotebooks = async () => {
+    try {
+      const response = await axiosInstance.get('/notebooks');
+      setNotebooks(response.data.data);
+    } catch (error) {
+      console.error('Error fetching notebooks:', error);
+      message.error('Failed to load notebooks.');
+    }
+  };
 
-    fetchFileContent();
+  useEffect(() => {
+    fetchNotebooks();
   }, []);
 
   const showCreateNotebookModal = () => {
@@ -43,7 +44,6 @@ function NotebookOverview() {
       const response = await axiosInstance.post('/notebooks', {
         name: newNotebookName,
       });
-      console.log("response.data:", response.data);
 
       setNotebooks((prev) => (Array.isArray(prev) ? [...prev, response.data] : [response.data]));
 
@@ -92,8 +92,7 @@ function NotebookOverview() {
                   }
                 }}
               >
-                {console.log("Notebook-Object into NotebookPreview:", notebook)}
-                <NotebookPreview notebook={notebook} />
+                <NotebookPreview notebook={notebook} refreshNotebooks={fetchNotebooks} />
               </div>
             ))
           ) : (

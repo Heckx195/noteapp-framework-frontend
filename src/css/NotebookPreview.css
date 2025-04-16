@@ -1,0 +1,21 @@
+.notebook-card {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.notebook-card-body {
+    padding: 15px;
+}
+
+.notebook-title {
+    margin-bottom: 10px;
+}
+
+.notebook-text {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.notebook-button {
+    margin-right: 10px;
+}

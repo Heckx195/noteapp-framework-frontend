@@ -33,6 +33,10 @@ const NoteAppHeader = ({ title }) => {
     navigate('/dashboard');
   };
 
+  const goToNotebookOverview = () => {
+    navigate('/notebookoverview');
+  }
+
   return (
     <Header className="note-app-header">
       <Title level={2} className="note-app-title" style={{ color: 'white' }}>{title}</Title>
@@ -42,7 +46,14 @@ const NoteAppHeader = ({ title }) => {
           onClick={goToHome}
           style={{ marginRight: '10px' }}
         >
-          Home
+          Dashboard
+        </Button>
+        <Button
+          type="default"
+          onClick={goToNotebookOverview}
+          style={{ marginRight: '10px' }}
+        >
+          Notebook Overview
         </Button>
         <Button
           type="primary"

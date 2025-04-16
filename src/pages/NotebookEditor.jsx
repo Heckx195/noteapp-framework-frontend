@@ -21,7 +21,9 @@ function NotebookEditor() {
     try {
       const response = await axiosInstance.get(`/notes/${notebookId}`);
       console.log("Received notes:", response.data.data)
-      setNotes(response.data.data);
+
+      const sortedNotes = response.data.data.sort((a, b) => a.id - b.id);
+      setNotes(sortedNotes);
     } catch (error) {
       console.error('Error fetching notes: ', error);
       message.error('Failed to load notes.');
@@ -103,6 +105,25 @@ function NotebookEditor() {
     setNewNoteTitle('');
   };
 
+  const handleDelete = async () => {
+    if (!selectedNote) {
+      message.error('No note selected.');
+      return;
+    }
+
+    try {
+      await axiosInstance.delete(`/notes/${selectedNote.id}`);
+      message.success('Note deleted successfully!');
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== selectedNote.id));
+      setSelectedNote(null);
+      setNoteTitle('');
+      setNoteContent('');
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      message.error('Failed to delete note.');
+    }
+  };
+
   return (
     <>
       <NoteAppHeader title="Notebook Editor" className="note-app-header" />
@@ -145,9 +166,14 @@ function NotebookEditor() {
                 onChange={(e) => setNoteContent(e.target.value)}
                 style={{ marginBottom: '10px' }}
               />
-              <Button type="primary" onClick={handleSave}>
-                Save
-              </Button>
+              <div className="button-group">
+                <Button type="primary" onClick={handleSave}>
+                  Save
+                </Button>
+                <Button type="primary" danger onClick={handleDelete}>
+                  Delete
+                </Button>
+              </div>
             </>
           ) : (
             <div>Select a note to view and edit its content.</div>
