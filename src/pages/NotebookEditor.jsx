@@ -38,7 +38,6 @@ function NotebookEditor() {
       });
 
       setNotes(response.data.data);
-      console.log("Total: ", response.data.total);
       setTotalNotes(response.data.total);
     } catch (error) {
       console.error('Error fetching notes: ', error);
