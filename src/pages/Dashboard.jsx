@@ -12,7 +12,7 @@ const { Title } = Typography;
 
 function Dashboard() {
   const [data, setData] = useState({
-    username: 'ERROR',
+    username: '',
     email: '',
     password: '',
   });

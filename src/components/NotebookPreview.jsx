@@ -47,7 +47,7 @@ const NotebookPreview = ({ notebook, refreshNotebooks, onCardClick }) => {
 
   const getNoteCount = async () => {
     try {
-      const response = await axiosInstance.get(`/notebookscount/${notebook.id}`);
+      const response = await axiosInstance.get(`/notescount/${notebook.id}`);
       setNoteCount(response.data.note_count);
     } catch (err) {
       console.error(err);

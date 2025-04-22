@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useMemo, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Typography, Layout, Spin, Button, Modal, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../tools/axiosInstance';
@@ -12,10 +12,16 @@ const NotebookPreview = lazy(() => import('../components/NotebookPreview'));
 
 function NotebookOverview() {
   const [notebooks, setNotebooks] = useState([]);
+  const [notebookCount, setNotebookCount] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchNotebooks();
+    getNotebookCount();
+  }, []);
+  
   const fetchNotebooks = async () => {
     try {
       const response = await axiosInstance.get('/notebooks');
@@ -26,10 +32,6 @@ function NotebookOverview() {
       message.error('Failed to load notebooks.');
     }
   };
-
-  useEffect(() => {
-    fetchNotebooks();
-  }, []);
 
   const showCreateNotebookModal = () => {
     setIsModalVisible(true);
@@ -57,6 +59,16 @@ function NotebookOverview() {
     }
   };
 
+  const getNotebookCount = async () => {
+    try {
+      const response = await axiosInstance.get('/notebookscount/');
+      setNotebookCount(response.data.notebook_count);
+    } catch (err) {
+      console.error(err);
+      message.error('Failed to fetch notebook count.');
+    }
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
     setNewNotebookName('');
@@ -71,6 +83,9 @@ function NotebookOverview() {
       <NoteAppHeader title="Notebook Overview" />
       <Content style={{ padding: '20px', textAlign: 'center' }}>
         <Title level={1}>Notebook Overview</Title>
+        <Paragraph className='notebook-count'>
+          Notebook Count: {notebookCount}
+        </Paragraph>
         <Button
           type="primary"
           style={{ marginBottom: '20px' }}
