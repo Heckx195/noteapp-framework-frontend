@@ -5,7 +5,7 @@ import '../css/NotebookPreview.css';
 
 const { Title, Text } = Typography;
 
-const NotebookPreview = ({ notebook, refreshNotebooks, onCardClick }) => {
+const NotebookPreview = ({ notebook, refreshNotebooks, refreshCounter, onCardClick }) => {
   const [noteCount, setNoteCount] = useState(0);
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
   const [newName, setNewName] = useState('');
@@ -19,7 +19,8 @@ const NotebookPreview = ({ notebook, refreshNotebooks, onCardClick }) => {
       const response = await axiosInstance.delete(`/notebooks/${notebook.id}`);
       if (response.status === 200) {
         message.success('Notebook deleted successfully!');
-        refreshNotebooks(); // Refresh the notebook list
+        refreshNotebooks(); // Refresh notebook list
+        refreshCounter(); // Refresh notebook counter
       } else {
         message.error('Failed to delete the notebook.');
       }
@@ -34,7 +35,8 @@ const NotebookPreview = ({ notebook, refreshNotebooks, onCardClick }) => {
       const response = await axiosInstance.put(`/notebooks/${notebook.id}`, { name: newName });
       if (response.status === 200) {
         message.success('Notebook renamed successfully!');
-        refreshNotebooks(); // Refresh the notebook list
+        refreshNotebooks(); // Refresh notebook list
+        refreshCounter(); // Refresh notebook counter
         setIsRenameModalVisible(false);
       } else {
         message.error('Failed to rename the notebook.');

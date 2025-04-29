@@ -2,12 +2,21 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
 .content {
     flex: 1;
     padding: 20px;
     text-align: center;
+}
+
+.notebooks-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
 }
 
 .notebook-count {

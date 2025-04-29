@@ -51,6 +51,8 @@ function NotebookOverview() {
       setNotebooks((prev) => (Array.isArray(prev) ? [...prev, response.data] : [response.data]));
 
       message.success('Notebook created successfully!');
+      getNotebookCount(); // Refresh notebook count
+
       setIsModalVisible(false);
       setNewNotebookName('');
     } catch (error) {
@@ -95,14 +97,17 @@ function NotebookOverview() {
         </Button>
         <Suspense fallback={<Spin size="large" />}>
           {notebooks?.length > 0 ? (
-            notebooks.map((notebook) => (
-              <NotebookPreview
-                key={notebook.id}
-                notebook={notebook}
-                onCardClick={() => handleNotebookClick(notebook.id)}
-                refreshNotebooks={fetchNotebooks}
-              />
-            ))
+            <div className="notebooks-container">
+              {notebooks.map((notebook) => (
+                <NotebookPreview
+                  key={notebook._id}
+                  notebook={notebook}
+                  onCardClick={() => handleNotebookClick(notebook._id)}
+                  refreshNotebooks={fetchNotebooks}
+                  refreshCounter={getNotebookCount}
+                />
+              ))}
+            </div>
           ) : (
             <Paragraph>No notes available.</Paragraph>
           )}
