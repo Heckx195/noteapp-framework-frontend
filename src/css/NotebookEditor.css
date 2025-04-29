@@ -81,3 +81,10 @@ html {
 .note-content-textarea {
     margin-bottom: 10px;
 }
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}

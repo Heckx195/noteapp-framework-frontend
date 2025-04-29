@@ -100,9 +100,9 @@ function NotebookOverview() {
             <div className="notebooks-container">
               {notebooks.map((notebook) => (
                 <NotebookPreview
-                  key={notebook._id}
+                  key={notebook.id}
                   notebook={notebook}
-                  onCardClick={() => handleNotebookClick(notebook._id)}
+                  onCardClick={() => handleNotebookClick(notebook.id)}
                   refreshNotebooks={fetchNotebooks}
                   refreshCounter={getNotebookCount}
                 />

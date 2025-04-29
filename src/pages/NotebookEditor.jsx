@@ -143,6 +143,71 @@ function NotebookEditor() {
     }
   };
 
+  const handleNotebookExport = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `/notebooks/${notebookId}/export`,
+        {},
+        { responseType: 'blob' }
+      );
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Set the filename for the download
+      link.setAttribute('download', `${notebookName || 'notebook'}.pdf`);
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Clean up the URL object
+      link.parentNode.removeChild(link)
+
+      message.success('Notebook exported successfully!');
+    } catch (error) {
+      console.error('Error exporting notebook:', error);
+      message.error('Failed to export notebook.');
+    }
+  };
+
+  const handleNoteExport = async () => {
+    if (!selectedNote) {
+      message.error('No note selected.');
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `/notes/${selectedNote.id}/export`,
+        {},
+        { responseType: 'blob' }
+      );
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Set the filename for the download
+      link.setAttribute('download', `${selectedNote.title || 'note'}.pdf`);
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Clean up the URL object
+      link.parentNode.removeChild(link)
+      
+      message.success('Note exported successfully!');
+    } catch (error) {
+      console.error('Error exporting note:', error);
+      message.error('Failed to export note.');
+    }
+  };
+
   const handleLimitChange = (e) => {
     const newLimit = parseInt(e.target.value, 10);
     if (!isNaN(newLimit) && newLimit > 0) {
@@ -155,20 +220,27 @@ function NotebookEditor() {
     setCurrentPage(page);
   };
 
-  
-
   return (
     <>
       <NoteAppHeader title="Notebook Editor" className="note-app-header" />
       <Layout className="notebook-editor">
         <Sider width={360} className="note-list-sider">
-          <Button
-            type="primary"
-            className="create-note-button"
-            onClick={() => setIsModalVisible(true)}
-          >
-            Create New Note
-          </Button>
+          <div className="button-container">
+            <Button
+              type="primary"
+              className="export-notebook-button"
+              onClick={() => handleNotebookExport()}
+            >
+              Export Notebook
+            </Button>
+            <Button
+              type="primary"
+              className="create-note-button"
+              onClick={() => setIsModalVisible(true)}
+            >
+              Create New Note
+            </Button>
+          </div>
           <div className="pagination-container">
             <Input
               type="number"
@@ -219,6 +291,9 @@ function NotebookEditor() {
               <div className="button-group">
                 <Button type="primary" onClick={handleSave}>
                   Save
+                </Button>
+                <Button type="primary" onClick={() => handleNoteExport()}>
+                  Export
                 </Button>
                 <Button type="primary" danger onClick={() => handleDelete()}>
                   Delete
