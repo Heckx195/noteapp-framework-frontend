@@ -37,7 +37,9 @@ function NotebookEditor() {
         params: { page, limit },
       });
 
-      setNotes(response.data.data);
+      const sortedNotes = response.data.data.sort((a, b) => a.id - b.id);
+
+      setNotes(sortedNotes);
       setTotalNotes(response.data.total);
     } catch (error) {
       console.error('Error fetching notes: ', error);
